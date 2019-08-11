@@ -1,0 +1,24 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "interface-name": false,
+        "eofline": false,
+        "array-type": false,
+        "object-literal-sort-keys": false,
+        "object-literal-shorthand": false,
+        "one-line": false,
+        "trailing-comma": false,
+        "semicolon": true,
+        "max-classes-per-file": false
+    },
+    "rulesDirectory": [],
+    "linterOptions": {
+        "exclude": [
+            "tst/**"
+        ]
+    }
+}
