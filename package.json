@@ -43,7 +43,7 @@
     "mocha": "^5.2.0",
     "source-map-support": "^0.5.11",
     "tslint": "^5.14.0",
-    "typescript": "^3.5.3"
+    "typescript": "^3.8.3"
   },
   "repository": {
     "type": "git",

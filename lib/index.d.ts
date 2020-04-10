@@ -1,2 +1,3 @@
 import { Assert } from "./Assert";
-export { Assert as assert };
+import { Expect } from "./Expect";
+export { Assert as assert, Expect as expect };

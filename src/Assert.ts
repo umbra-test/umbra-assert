@@ -1,18 +1,9 @@
 import { deepEqual } from "@umbra-test/umbra-util";
+import { assert } from "../src";
 
-let objectIs = Object.is;
-if (!objectIs) {
-    objectIs = (x, y) => {
-        // SameValue algorithm
-        if (x === y) { // Steps 1-5, 7-10
-            // Steps 6.b-6.e: +0 != -0
-            return x !== 0 || 1 / x === 1 / y;
-        } else {
-            // Step 6.a: NaN == NaN
-            return x !== x && y !== y;
-        }
-    };
-}
+type ExtractArrayType<T> = T extends any[] ? T[number] :
+                           T extends object ? Partial<T> :
+                           T;
 
 class AssertionError extends Error {
 
@@ -28,7 +19,7 @@ class Assert {
         // TODO
     }
 
-    public static equal<T>(expected: T, actual: T, message?: string): void {
+    public static equal(expected: any, actual: any, message?: string): void {
         if (deepEqual(expected, actual)) {
             return;
         }
@@ -37,7 +28,7 @@ class Assert {
             `Expected ${Assert.printObject(actual)} to deeply equal ${Assert.printObject(expected)}`, message);
     }
 
-    public static notEqual<T>(expected: T, actual: T, message?: string): void {
+    public static notEqual(expected: any, actual: any, message?: string): void {
         if (!deepEqual(expected, actual)) {
             return;
         }
@@ -46,28 +37,28 @@ class Assert {
             `Expected ${Assert.printObject(actual)} to not deeply equal ${Assert.printObject(expected)}`, message);
     }
 
-    public static looseEqual<T>(actual: T, expected: T, message?: string): void {
+    public static looseEqual(actual: any, expected: any, message?: string): void {
         // tslint:disable-next-line: triple-equals
         if (expected == actual) {
             return;
         }
 
         throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} to loosely equal ${Assert.printObject(expected)}`, message);
+            `Expected ${Assert.printObject(actual)} == ${Assert.printObject(expected)}`, message);
     }
 
-    public static notLooseEqual<T>(actual: T, expected: T, message?: string): void {
+    public static notLooseEqual(actual: any, expected: any, message?: string): void {
         // tslint:disable-next-line: triple-equals
         if (expected != actual) {
             return;
         }
 
         throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} to not loosely equal ${Assert.printObject(expected)}`, message);
+            `Expected ${Assert.printObject(actual)} != ${Assert.printObject(expected)}`, message);
     }
 
     public static strictEqual<T>(actual: T, expected: T, message?: string): void {
-        if (objectIs(expected, actual)) {
+        if (Object.is(expected, actual)) {
             return;
         }
 
@@ -76,7 +67,7 @@ class Assert {
     }
 
     public static notStrictEqual<T>(actual: T, expected: T, message?: string): void {
-        if (objectIs(expected, actual)) {
+        if (!Object.is(expected, actual)) {
             return;
         }
 
@@ -84,12 +75,15 @@ class Assert {
             `Expected ${Assert.printObject(actual)} to not strictly equal ${Assert.printObject(expected)}`, message);
     }
 
-    public static is<T>(actual: T, expected: T, message?: string): void {
+    public static is(actual: any, expected: any, message?: string): void {
         Assert.strictEqual(actual, expected, message);
     }
 
-    public static has<T, U>(target: T, keyPath: keyof T | string, expected: U, message?: string): void {
-        const pathArray = typeof keyPath === "string" ? keyPath.split(".") : [keyPath];
+    public static has<T, U>(target: T, keyPath: string, expected: U, message?: string): void {
+        assert.exists(target, "target");
+        assert.exists(keyPath, "keyPath");
+        assert.exists(target, "target");
+        const pathArray = keyPath.split(".");
         let result: any = target;
         for (const path of pathArray) {
             const newResult = result[path];
@@ -115,20 +109,19 @@ class Assert {
         return actual
             .then((actualValue: T) => {
                 Assert.equal(actualValue, expected);
-            })
-            .catch((e) => {
+            }, (e) => {
                 throw new AssertionError(`Promise should not have successfully resolved.\nException: ${e}\n`, message);
             });
     }
 
-    public static rejects<T>(actual: Promise<T>, expected?: Error, message?: string): Promise<void> {
+    public static rejects<T>(actual: Promise<T>, expected?: Error | string, message?: string): Promise<void> {
+        const errorMessage = expected instanceof Error ? expected.message : expected;
         return actual
             .then(() => {
                 throw new AssertionError("Promise should not have successfully resolved", message);
-            })
-            .catch((e) => {
-                if (expected) {
-                    Assert.equal(expected.message, e.message);
+            }, (e) => {
+                if (errorMessage) {
+                    Assert.equal(errorMessage, e.message);
                 }
             });
     }
@@ -145,12 +138,44 @@ class Assert {
         Assert.equal(false, value, message);
     }
 
-    public static isTruthy(value: boolean, message?: string): void {
-        Assert.looseEqual(true, value, message);
+    public static isTruthy(value: any, message?: string): void {
+        if (!value) {
+            throw new AssertionError(`Expected ${value} to be truthy`, message);
+        }
     }
 
-    public static isFalsy(value: boolean, message?: string): void {
-        Assert.looseEqual(false, value, message);
+    public static isFalsy(value: any, message?: string): void {
+        if (value) {
+            throw new AssertionError(`Expected ${value} to be falsy`, message);
+        }
+    }
+
+    public static exists<T>(expected: T | null | undefined, message?: string): expected is T {
+        this.notEqual(expected, null, `Expected ${Assert.printObject(expected)} to not be null. ${message}`);
+        this.notEqual(expected, undefined, `Expected ${Assert.printObject(expected)} to not be undefined. ${message}`);
+        return true;
+    }
+
+    public static contains<T extends any[] | string | any>(target: T, value: ExtractArrayType<T>, message?: string) {
+        this.exists(target);
+        if (typeof target === "string") {
+            Assert.isTrue(target.indexOf(value) !== -1, `String: ${value} was not found in ${target}`);
+        } else if (Array.isArray(target)) {
+            Assert.isTrue(target.indexOf(value) !== -1,
+                `${Assert.printObject(value)} was not found in target array ${Assert.printObject(target)}. ${message ?? ""}`);
+        } else {
+            for (const [entryKey, entryValue] of Object.entries(value)) {
+                Assert.equal(target[entryKey], entryValue);
+            }
+        }
+    }
+
+    public static containsAll<T>(target: T[], values: T[], message?: string) {
+        this.exists(target);
+        this.exists(values);
+        for (const value of values) {
+            Assert.contains(target, value, message);
+        }
     }
 
     private static printObject(object: any): string {
