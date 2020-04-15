@@ -6,4 +6,5 @@ declare class Expect {
     toBeTruthy(): void;
     toBeFalsy(): void;
 }
-export { Expect };
+declare function expect(target: any): Expect;
+export { expect };

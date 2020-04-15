@@ -25,6 +25,10 @@ class Expect {
     }
 }
 
+function expect(target: any) {
+    return new Expect(target);
+}
+
 export {
-    Expect
+    expect
 };
