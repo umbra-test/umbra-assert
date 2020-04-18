@@ -1,5 +1,4 @@
 import { deepEqual } from "@umbra-test/umbra-util";
-import { assert } from "../src";
 
 type ExtractArrayType<T> = T extends any[] ? T[number] :
                            T extends object ? Partial<T> :
@@ -80,9 +79,9 @@ class Assert {
     }
 
     public static has<T, U>(target: T, keyPath: string, expected: U, message?: string): void {
-        assert.exists(target, "target");
-        assert.exists(keyPath, "keyPath");
-        assert.exists(target, "target");
+        Assert.exists(target, "target");
+        Assert.exists(keyPath, "keyPath");
+        Assert.exists(target, "target");
         const pathArray = keyPath.split(".");
         let result: any = target;
         for (const path of pathArray) {
