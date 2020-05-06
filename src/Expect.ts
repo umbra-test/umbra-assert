@@ -30,5 +30,6 @@ function expect(target: any) {
 }
 
 export {
+    Expect,
     expect
 };

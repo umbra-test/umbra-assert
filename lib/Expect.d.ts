@@ -7,4 +7,4 @@ declare class Expect {
     toBeFalsy(): void;
 }
 declare function expect(target: any): Expect;
-export { expect };
+export { Expect, expect };

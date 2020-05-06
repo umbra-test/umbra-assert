@@ -1,4 +1,4 @@
-import { deepEqual } from "@umbra-test/umbra-util";
+import { deepEqual, printObject } from "@umbra-test/umbra-util";
 
 type ExtractArrayType<T> = T extends any[] ? T[number] :
                            T extends object ? Partial<T> :
@@ -23,8 +23,7 @@ class Assert {
             return;
         }
 
-        throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} to deeply equal ${Assert.printObject(expected)}`, message);
+        throw new AssertionError(`Expected ${printObject(actual)} to deeply equal ${printObject(expected)}`, message);
     }
 
     public static notEqual(expected: any, actual: any, message?: string): void {
@@ -32,8 +31,7 @@ class Assert {
             return;
         }
 
-        throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} to not deeply equal ${Assert.printObject(expected)}`, message);
+        throw new AssertionError(`Expected ${printObject(actual)} to not deeply equal ${printObject(expected)}`, message);
     }
 
     public static looseEqual(actual: any, expected: any, message?: string): void {
@@ -42,8 +40,7 @@ class Assert {
             return;
         }
 
-        throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} == ${Assert.printObject(expected)}`, message);
+        throw new AssertionError(`Expected ${printObject(actual)} == ${printObject(expected)}`, message);
     }
 
     public static notLooseEqual(actual: any, expected: any, message?: string): void {
@@ -52,8 +49,7 @@ class Assert {
             return;
         }
 
-        throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} != ${Assert.printObject(expected)}`, message);
+        throw new AssertionError(`Expected ${printObject(actual)} != ${printObject(expected)}`, message);
     }
 
     public static strictEqual<T>(actual: T, expected: T, message?: string): void {
@@ -61,8 +57,7 @@ class Assert {
             return;
         }
 
-        throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} to strictly equal ${Assert.printObject(expected)}`, message);
+        throw new AssertionError(`Expected ${printObject(actual)} to strictly equal ${printObject(expected)}`, message);
     }
 
     public static notStrictEqual<T>(actual: T, expected: T, message?: string): void {
@@ -70,8 +65,7 @@ class Assert {
             return;
         }
 
-        throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} to not strictly equal ${Assert.printObject(expected)}`, message);
+        throw new AssertionError(`Expected ${printObject(actual)} to not strictly equal ${printObject(expected)}`, message);
     }
 
     public static is(actual: any, expected: any, message?: string): void {
@@ -87,8 +81,7 @@ class Assert {
         for (const path of pathArray) {
             const newResult = result[path];
             if (!newResult) {
-                Assert.fail(`Missing key "${path}" in object ${Assert.printObject(result)}\n` +
-                    `Available keys: ${Assert.printObject(Object.keys(expected))}`);
+                Assert.fail(`Missing key "${path}" in object ${printObject(result)}\nAvailable keys: ${printObject(Object.keys(expected))}`);
             }
             result = newResult;
         }
@@ -100,8 +93,7 @@ class Assert {
             return;
         }
 
-        throw new AssertionError(
-            `Expected ${Assert.printObject(actual)} to match the regex ${Assert.printObject(expected)}`, message);
+        throw new AssertionError(`Expected ${printObject(actual)} to match the regex ${printObject(expected)}`, message);
     }
 
     public static resolvesTo<T>(actual: Promise<T>, expected: T, message?: string): Promise<void> {
@@ -150,8 +142,8 @@ class Assert {
     }
 
     public static exists<T>(expected: T | null | undefined, message?: string): expected is T {
-        this.notEqual(expected, null, `Expected ${Assert.printObject(expected)} to not be null. ${message}`);
-        this.notEqual(expected, undefined, `Expected ${Assert.printObject(expected)} to not be undefined. ${message}`);
+        this.notEqual(expected, null, `Expected ${printObject(expected)} to not be null. ${message}`);
+        this.notEqual(expected, undefined, `Expected ${printObject(expected)} to not be undefined. ${message}`);
         return true;
     }
 
@@ -160,8 +152,7 @@ class Assert {
         if (typeof target === "string") {
             Assert.isTrue(target.indexOf(value) !== -1, `String: ${value} was not found in ${target}`);
         } else if (Array.isArray(target)) {
-            Assert.isTrue(target.indexOf(value) !== -1,
-                `${Assert.printObject(value)} was not found in target array ${Assert.printObject(target)}. ${message ?? ""}`);
+            Assert.isTrue(target.indexOf(value) !== -1, `${printObject(value)} was not found in target array ${printObject(target)}. ${message ?? ""}`);
         } else {
             for (const [entryKey, entryValue] of Object.entries(value)) {
                 Assert.equal(target[entryKey], entryValue);
@@ -177,13 +168,6 @@ class Assert {
         }
     }
 
-    private static printObject(object: any): string {
-        if (object instanceof RegExp) {
-            return object.toString();
-        }
-
-        return JSON.stringify(object);
-    }
 }
 
 export {

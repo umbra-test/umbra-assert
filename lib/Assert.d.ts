@@ -20,6 +20,5 @@ declare class Assert {
     static exists<T>(expected: T | null | undefined, message?: string): expected is T;
     static contains<T extends any[] | string | any>(target: T, value: ExtractArrayType<T>, message?: string): void;
     static containsAll<T>(target: T[], values: T[], message?: string): void;
-    private static printObject;
 }
 export { Assert };

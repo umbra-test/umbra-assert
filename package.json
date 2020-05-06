@@ -1,6 +1,6 @@
 {
   "name": "umbra-assert",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Assertion library included with the Umbra Test packages.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -34,7 +34,9 @@
       "html"
     ]
   },
-  "dependencies": {},
+  "dependencies": {
+    "@umbra-test/umbra-util": "0.0.3"
+  },
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/mocha": "^5.2.6",

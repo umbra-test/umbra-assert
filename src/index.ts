@@ -1,7 +1,8 @@
 import { Assert } from "./Assert";
-import { expect } from "./Expect";
+import { Expect, expect } from "./Expect";
 
 export {
     Assert as assert,
-    expect
+    expect,
+    Expect
 };
