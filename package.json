@@ -1,14 +1,14 @@
 {
   "name": "umbra-assert",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Assertion library included with the Umbra Test packages.",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "build": "tsc",
-    "watch-build": "(tsc -w &) && (tsc -w -p tsconfig-test.json)",
-    "test": "tsc -p tsconfig-test.json && nyc mocha --require source-map-support/register --recursive lib/tests/tst/**/*.js",
+    "build": "npx tsc",
+    "watch-build": "(npx tsc -w &) && (npx tsc -w -p tsconfig-test.json)",
+    "test": "npx tsc -p tsconfig-test.json && nyc mocha --require source-map-support/register --recursive lib/tests/tst/**/*.js",
     "lint": "tslint --project .",
     "coveralls": "nyc report --reporter=text-lcov | coveralls",
     "all": "npm run build && npm run test && npm run lint && npm run coveralls"
@@ -35,7 +35,7 @@
     ]
   },
   "dependencies": {
-    "@umbra-test/umbra-util": "0.0.3"
+    "@umbra-test/umbra-util": "0.0.4"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
@@ -46,7 +46,7 @@
     "mocha": "^5.2.0",
     "source-map-support": "^0.5.11",
     "tslint": "^5.14.0",
-    "typescript": "^3.8.3"
+    "typescript": "^3.9.2"
   },
   "repository": {
     "type": "git",
