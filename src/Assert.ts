@@ -12,7 +12,7 @@ class AssertionError extends Error {
     }
 }
 
-class Assert {
+class assert {
 
     public static that<T>(output: boolean): void {
         // TODO
@@ -69,23 +69,23 @@ class Assert {
     }
 
     public static is(actual: any, expected: any, message?: string): void {
-        Assert.strictEqual(actual, expected, message);
+        assert.strictEqual(actual, expected, message);
     }
 
     public static has<T, U>(target: T, keyPath: string, expected: U, message?: string): void {
-        Assert.exists(target, "target");
-        Assert.exists(keyPath, "keyPath");
-        Assert.exists(target, "target");
+        assert.exists(target, "target");
+        assert.exists(keyPath, "keyPath");
+        assert.exists(target, "target");
         const pathArray = keyPath.split(".");
         let result: any = target;
         for (const path of pathArray) {
             const newResult = result[path];
             if (!newResult) {
-                Assert.fail(`Missing key "${path}" in object ${printObject(result)}\nAvailable keys: ${printObject(Object.keys(expected))}`);
+                assert.fail(`Missing key "${path}" in object ${printObject(result)}\nAvailable keys: ${printObject(Object.keys(expected))}`);
             }
             result = newResult;
         }
-        Assert.strictEqual(result, expected, message);
+        assert.strictEqual(result, expected, message);
     }
 
     public static regexMatches(actual: string, expected: RegExp, message?: string): void {
@@ -99,7 +99,7 @@ class Assert {
     public static resolvesTo<T>(actual: Promise<T>, expected: T, message?: string): Promise<void> {
         return actual
             .then((actualValue: T) => {
-                Assert.equal(actualValue, expected);
+                assert.equal(actualValue, expected);
             }, (e) => {
                 throw new AssertionError(`Promise should not have successfully resolved.\nException: ${e}\n`, message);
             });
@@ -112,7 +112,7 @@ class Assert {
                 throw new AssertionError("Promise should not have successfully resolved", message);
             }, (e) => {
                 if (errorMessage) {
-                    Assert.equal(errorMessage, e.message);
+                    assert.equal(errorMessage, e.message);
                 }
             });
     }
@@ -122,11 +122,11 @@ class Assert {
     }
 
     public static isTrue(value: boolean, message?: string): void {
-        Assert.equal(true, value, message);
+        assert.equal(true, value, message);
     }
 
     public static isFalse(value: boolean, message?: string): void {
-        Assert.equal(false, value, message);
+        assert.equal(false, value, message);
     }
 
     public static isTruthy(value: any, message?: string): void {
@@ -150,12 +150,12 @@ class Assert {
     public static contains<T extends any[] | string | any>(target: T, value: ExtractArrayType<T>, message?: string) {
         this.exists(target);
         if (typeof target === "string") {
-            Assert.isTrue(target.indexOf(value) !== -1, `String: ${value} was not found in ${target}`);
+            assert.isTrue(target.indexOf(value as any) !== -1, `String: ${value} was not found in ${target}`);
         } else if (Array.isArray(target)) {
-            Assert.isTrue(target.indexOf(value) !== -1, `${printObject(value)} was not found in target array ${printObject(target)}. ${message ?? ""}`);
+            assert.isTrue(target.indexOf(value) !== -1, `${printObject(value)} was not found in target array ${printObject(target)}. ${message ?? ""}`);
         } else {
-            for (const [entryKey, entryValue] of Object.entries(value)) {
-                Assert.equal(target[entryKey], entryValue);
+            for (const [entryKey, entryValue] of Object.entries(value as any)) {
+                assert.equal((target as any)[entryKey], entryValue as any);
             }
         }
     }
@@ -164,12 +164,12 @@ class Assert {
         this.exists(target);
         this.exists(values);
         for (const value of values) {
-            Assert.contains(target, value, message);
+            assert.contains(target, value, message);
         }
     }
 
 }
 
 export {
-    Assert
+    assert
 };

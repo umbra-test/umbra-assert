@@ -1,5 +1,5 @@
 declare type ExtractArrayType<T> = T extends any[] ? T[number] : T extends object ? Partial<T> : T;
-declare class Assert {
+declare class assert {
     static that<T>(output: boolean): void;
     static equal(expected: any, actual: any, message?: string): void;
     static notEqual(expected: any, actual: any, message?: string): void;
@@ -21,4 +21,4 @@ declare class Assert {
     static contains<T extends any[] | string | any>(target: T, value: ExtractArrayType<T>, message?: string): void;
     static containsAll<T>(target: T[], values: T[], message?: string): void;
 }
-export { Assert };
+export { assert };
